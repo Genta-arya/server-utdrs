@@ -147,7 +147,7 @@ export const ValidateKtp = async (req, res) => {
     });
 
     if (!findData) {
-      return sendResponse(res, 404, "Nomor KTP tidak ditemukan!");
+      return sendResponse(res, 404, "Nomor KTP tidak ditemukan! , Silahkan Registrasi Biodata terlebih dahulu");
     }
     sendResponse(res, 200, "Nomor KTP ditemukan!", findData);
   } catch (error) {
