@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+model registrasis {
+  id                   Int      @id @default(autoincrement())
+  no_ktp               String   @db.Char(16)
+  nama_lengkap         String  @db.VarChar(100)
+  alamat               String   @db.Text
+  jenis_kelamin        JenisKelamin
+  no_hp                String   @db.VarChar(15)
+  pekerjaan            Pekerjaan
+  tanggal_lahir        DateTime @db.Date
+  tanggal_donor_terakhir DateTime? @db.Date
+  donor_ke             Int      @default(0)
+  bersedia_donor_puasa Kesediaan
+  created_at           DateTime? @db.Timestamp
+  updated_at           DateTime? @db.Timestamp
+}
+
+enum JenisKelamin {
+  L
+  P
+}
+
+enum Pekerjaan {
+  TNI_POLRI
+  PNS_Swasta
+  Petani_Buruh
+  Mahasiswa_Pelajar
+  Pedagang
+}
+
+enum Kesediaan {
+  Ya
+  Tidak
+}
