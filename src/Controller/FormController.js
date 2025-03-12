@@ -100,9 +100,8 @@ export const HandleFormRegister = async (req, res) => {
         no_hp,
         pekerjaan: pekerjaanFormatted,
         tanggal_lahir: new Date(tanggal_lahir),
-        tanggal_donor_terakhir: tanggal_donor_terakhir
-          ? new Date(tanggal_donor_terakhir)
-          : null,
+        tanggal_donor_terakhir: new Date(),
+
         donor_ke: countDonor + 1, // Donor ke bertambah sesuai jumlah sebelumnya
         bersedia_donor_puasa,
         created_at: new Date(),
@@ -142,12 +141,15 @@ export const ValidateKtp = async (req, res) => {
         pekerjaan: true,
         tanggal_donor_terakhir: true,
         tanggal_lahir: true,
-        
-      }
+      },
     });
 
     if (!findData) {
-      return sendResponse(res, 404, "Nomor KTP tidak ditemukan! , Silahkan Registrasi Biodata terlebih dahulu");
+      return sendResponse(
+        res,
+        404,
+        "Nomor KTP tidak ditemukan! , Silahkan Registrasi Biodata terlebih dahulu"
+      );
     }
     sendResponse(res, 200, "Nomor KTP ditemukan!", findData);
   } catch (error) {
