@@ -90,7 +90,7 @@ export const HandleFormRegister = async (req, res) => {
     });
 
     if (existingDonorToday) {
-      return sendError(res, 400, "Anda sudah melakukan donor darah hari ini!");
+      return sendResponse(res, 400, "Anda sudah melakukan donor darah hari ini!");
     }
 
     const countDonor = await prisma.registrasis.count({
