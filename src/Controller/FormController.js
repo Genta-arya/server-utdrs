@@ -1,6 +1,6 @@
 import { prisma } from "../Config/Prisma.js";
 import { sendError, sendResponse } from "../Utils/Response.js";
-
+import { DateTime } from "luxon";
 export const HandleFormRegister = async (req, res) => {
   try {
     const {
@@ -17,7 +17,6 @@ export const HandleFormRegister = async (req, res) => {
 
     console.log(req.body);
 
-    // Validasi data tidak boleh kosong
     if (
       !no_ktp ||
       !nama_lengkap ||
@@ -31,12 +30,10 @@ export const HandleFormRegister = async (req, res) => {
       return sendError(res, 400, "Semua kolom wajib diisi!");
     }
 
-    // Validasi No KTP harus 16 karakter
     if (no_ktp.length !== 16) {
       return sendError(res, 400, "No KTP harus terdiri dari 16 karakter!");
     }
 
-    // Validasi jenis_kelamin (harus 'L' atau 'P')
     const validJenisKelamin = ["L", "P"];
     if (!validJenisKelamin.includes(jenis_kelamin)) {
       return sendResponse(
@@ -46,7 +43,6 @@ export const HandleFormRegister = async (req, res) => {
       );
     }
 
-    // Mapping pekerjaan frontend ke backend (agar sesuai dengan database)
     const pekerjaanMap = {
       TNI_POLRI: "TNI_POLRI",
       PNS_Swasta: "PNS_Swasta",
@@ -55,10 +51,8 @@ export const HandleFormRegister = async (req, res) => {
       Pedagang: "Pedagang",
     };
 
-    // Ubah pekerjaan dari frontend ke format yang dikenali database
     const pekerjaanFormatted = pekerjaanMap[pekerjaan] || pekerjaan;
 
-    // Validasi pekerjaan setelah dipetakan
     const validPekerjaan = [
       "TNI_POLRI",
       "PNS_Swasta",
@@ -75,7 +69,6 @@ export const HandleFormRegister = async (req, res) => {
       );
     }
 
-    // Validasi bersedia_donor_puasa (harus 'Ya' atau 'Tidak')
     const validKesediaan = ["Ya", "Tidak"];
     if (!validKesediaan.includes(bersedia_donor_puasa)) {
       return sendResponse(
@@ -85,12 +78,25 @@ export const HandleFormRegister = async (req, res) => {
       );
     }
 
-    // Hitung jumlah registrasi sebelumnya untuk no_ktp yang sama
+    const today = DateTime.now().toISODate();
+
+    const existingDonorToday = await prisma.registrasis.findFirst({
+      where: {
+        no_ktp,
+        tanggal_donor_terakhir: {
+          gte: new Date(today), 
+        },
+      },
+    });
+
+    if (existingDonorToday) {
+      return sendError(res, 400, "Anda sudah melakukan donor darah hari ini!");
+    }
+
     const countDonor = await prisma.registrasis.count({
       where: { no_ktp },
     });
 
-    // Simpan ke database dengan donor_ke otomatis bertambah
     const newRegistration = await prisma.registrasis.create({
       data: {
         no_ktp,
@@ -102,7 +108,7 @@ export const HandleFormRegister = async (req, res) => {
         tanggal_lahir: new Date(tanggal_lahir),
         tanggal_donor_terakhir: new Date(),
 
-        donor_ke: countDonor + 1, // Donor ke bertambah sesuai jumlah sebelumnya
+        donor_ke: countDonor + 1,
         bersedia_donor_puasa,
         created_at: new Date(),
         updated_at: new Date(),
