@@ -78,19 +78,23 @@ export const HandleFormRegister = async (req, res) => {
       );
     }
 
-    const today = DateTime.now().toISODate();
+    const today = DateTime.now().setZone("Asia/Jakarta").toISODate();
 
     const existingDonorToday = await prisma.registrasis.findFirst({
       where: {
         no_ktp,
         tanggal_donor_terakhir: {
-          gte: new Date(today), 
+          gte: new Date(today),
         },
       },
     });
 
     if (existingDonorToday) {
-      return sendResponse(res, 400, "Anda sudah melakukan donor darah hari ini!");
+      return sendResponse(
+        res,
+        400,
+        "Anda sudah melakukan donor darah hari ini!"
+      );
     }
 
     const countDonor = await prisma.registrasis.count({
