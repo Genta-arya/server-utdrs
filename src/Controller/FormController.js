@@ -100,6 +100,7 @@ export const HandleFormRegister = async (req, res) => {
     const countDonor = await prisma.registrasis.count({
       where: { no_ktp },
     });
+    const nowWIB = DateTime.now().setZone("Asia/Jakarta");
 
     const newRegistration = await prisma.registrasis.create({
       data: {
@@ -110,7 +111,7 @@ export const HandleFormRegister = async (req, res) => {
         no_hp,
         pekerjaan: pekerjaanFormatted,
         tanggal_lahir: new Date(tanggal_lahir),
-        tanggal_donor_terakhir: new Date(),
+        tanggal_donor_terakhir: new Date(nowWIB.toISO()),
 
         donor_ke: countDonor + 1,
         bersedia_donor_puasa,
