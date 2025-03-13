@@ -79,6 +79,7 @@ export const HandleFormRegister = async (req, res) => {
     }
 
     const today = DateTime.now().setZone("Asia/Jakarta").toISODate();
+    console.log(today);
 
     const existingDonorToday = await prisma.registrasis.findFirst({
       where: {
