@@ -15,7 +15,7 @@ export const HandleFormRegister = async (req, res) => {
       bersedia_donor_puasa,
     } = req.body;
 
-    console.log(req.body);
+    
 
     if (
       !no_ktp ||
@@ -89,6 +89,8 @@ export const HandleFormRegister = async (req, res) => {
         },
       },
     });
+
+    console.log(existingDonorToday);
 
     if (existingDonorToday) {
       return sendResponse(
