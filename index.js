@@ -3,6 +3,7 @@ import express from "express";
 import { createServer } from "http";
 import cors from "cors";
 import { Routes } from "./src/Routes/Routes.js";
+import { MidlewareEndpoint } from "./src/Midleware/index.js";
 
 
 const app = express();
@@ -33,7 +34,7 @@ app.use(
   })
 );
 app.use(domainMiddleware); 
-app.use("/api/v1", Routes )
+app.use("/api/v1", MidlewareEndpoint, Routes )
 
 
 

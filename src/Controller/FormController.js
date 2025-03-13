@@ -11,7 +11,7 @@ export const HandleFormRegister = async (req, res) => {
       no_hp,
       pekerjaan,
       tanggal_lahir,
-      tanggal_donor_terakhir,
+
       bersedia_donor_puasa,
     } = req.body;
 
